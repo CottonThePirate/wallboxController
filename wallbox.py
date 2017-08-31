@@ -32,10 +32,8 @@ GPIO.setup(WALLBOX, GPIO.IN)
 
 
 # this function tests if a pulse or gap is wide enough to be registered
-# this is needed for two reasons. 1) Sometimes the wallbox will generate an errant pulse
-# which will cause errors if interpretted as a proper contact pulse 2) because of the
-# way that I have tapped the wallbox pulses, there will be short gaps inside each pulse
-# that need to be ignored
+# with a regulator and opto isolator, as well as a large resitor (1Mohm range) 
+# you should notice errant pulses, but you will notice 60 Hz pulses no matter what
 
 def state_has_changed(starting_state):
     starting_time = time.time()
