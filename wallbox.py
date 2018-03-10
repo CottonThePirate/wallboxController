@@ -9,6 +9,7 @@ import os
 import httplib
 import csv
 import logging
+import logging.handlers
 from multiprocessing import Process, Queue
 
 
@@ -95,7 +96,7 @@ def calculate_track(logger):
 
 
       
-def wallboxMonitor(logger, lightBridge):
+def wallboxMonitor(logger):
     command = False
     parentalMode = False
     logger.debug("In Wallbox monitor")
@@ -151,7 +152,7 @@ def wallboxMonitor(logger, lightBridge):
                             logger.info(
                                 "turnonproc failed to terminate, this is ok on first run")
 
-                        with open('./database/JukeBoxSongs.csv') as csvfile:
+                        with open('./JukeBoxSongs.csv') as csvfile:
                             reader = csv.DictReader(csvfile)
                             logger.debug("Opened csv file")
                             for row in reader:
@@ -159,16 +160,32 @@ def wallboxMonitor(logger, lightBridge):
                                     if(row['Key-number'] == trackNum):
                                         logger.info("Row %s, url %s", row[
                                                     'Track Name'], row['URL'])
-                                            try:
+                                        try:
                                               #play song 
+                                              print("Play Song" + Key-letter + Key-number)
+                                         
+                                        except Exception, err:
+                                           logger.exception(
+                                              "Error playing song after getting track")
                     except Exception, err:
-                        logger.exception(
-                            "Error playing song after getting track")
+                       logger.exception(
+                          "Error playing song after getting track")
+
+
+
 
 
 if __name__ == '__main__':
 
     # logger
+        #FORMAT='%(asctime)s  - %(message)s'
+    FORMAT = '%(asctime)s  %(name)s  %(levelname)s - %(message)s'
     logger = logging.getLogger()
+    fh = logging.handlers.RotatingFileHandler(
+        "/home/cschaab/log/juke.log", maxBytes=200000, backupCount=3)
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(logging.Formatter(FORMAT))
+    logger.addHandler(fh)
+
 
     wallboxMonitor(logger)
